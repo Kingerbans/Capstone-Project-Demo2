@@ -144,9 +144,6 @@ public class CallActivity extends AppCompatActivity{
         localMediaStream.addTrack(videoTrack);
         localMediaStream.addTrack(audioTrack);
 
-        videoTrack.setEnabled(false);
-        audioTrack.setEnabled(false);
-
         btnCamera = findViewById(R.id.btnCamera);
         btnMic = findViewById(R.id.btnMic);
         btnEndCall = findViewById(R.id.btnEndCall);
@@ -189,7 +186,11 @@ public class CallActivity extends AppCompatActivity{
         btnEndCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SocketHandler.getSocket().emit(CALLEND);
+                try {
+                    SocketHandler.getSocket().emit(CALLEND, SocketHandler.getSocketObj().getString(ID));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 stop();
             }
         });
@@ -208,7 +209,6 @@ public class CallActivity extends AppCompatActivity{
             textView = findViewById(R.id.incomingCallTxt);
 
             linearLayout.setVisibility(View.VISIBLE);
-//            textView.setText(getIntent().getExtras().getString(FULLNAME) + " is calling .....");
             try {
                 textView.setText(SocketHandler.getSocketObj().getString(FULLNAME) + " is calling .....");
             } catch (JSONException e) {
@@ -217,9 +217,11 @@ public class CallActivity extends AppCompatActivity{
             btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    videoTrack.setEnabled(true);
-                    audioTrack.setEnabled(true);
-                    SocketHandler.getSocket().emit(CALLACCEPT);
+                    try {
+                        SocketHandler.getSocket().emit(CALLACCEPT, SocketHandler.getSocketObj().getString(ID));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     linearLayout.setVisibility(View.GONE);
                 }
             });
@@ -227,7 +229,11 @@ public class CallActivity extends AppCompatActivity{
             btnReject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SocketHandler.getSocket().emit(CALLREJECT);
+                    try {
+                        SocketHandler.getSocket().emit(CALLREJECT, SocketHandler.getSocketObj().getString(ID));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     stop();
                 }
             });
@@ -320,13 +326,6 @@ public class CallActivity extends AppCompatActivity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        }).on(CALLACCEPT, new Emitter.Listener() {
-
-            @Override
-            public void call(Object... args) {
-                videoTrack.setEnabled(true);
-                audioTrack.setEnabled(true);
             }
         }).on(CALLREJECT, new Emitter.Listener() {
 

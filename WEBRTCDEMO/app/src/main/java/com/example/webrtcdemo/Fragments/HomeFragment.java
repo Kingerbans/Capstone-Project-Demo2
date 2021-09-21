@@ -1,6 +1,8 @@
 package com.example.webrtcdemo.Fragments;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,8 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.webrtcdemo.CallActivity;
+import com.example.webrtcdemo.DashboardActivity;
 import com.example.webrtcdemo.Handler.SocketHandler;
 import com.example.webrtcdemo.R;
 
@@ -25,12 +29,9 @@ import io.socket.emitter.Emitter;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-    Button btnCall;
+    Button btnCall, btnCopy;
     EditText edtTxtName;
     TextView txtID;
-    Dialog myDialog;
-    Button btnBack;
-    TextView txtError;
     private static final String CHECKCALLER = "checkCaller";
     private static final String FULLNAME = "fullName";
 
@@ -84,11 +85,10 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
+        btnCopy = view.findViewById(R.id.btnCopy);
         btnCall = view.findViewById(R.id.btnCall);
         edtTxtName = view.findViewById(R.id.edtTxtName);
         txtID = view.findViewById(R.id.txtID);
-
-        myDialog = new Dialog(view.getContext());
 
         txtID.setText("ID: " + SocketHandler.getSocketId());
 
@@ -102,20 +102,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        return view;
-    }
-
-    public void popUp(String text){
-        myDialog.setContentView(R.layout.error_popup);
-        txtError = myDialog.findViewById(R.id.txtError);
-        txtError.setText(text);
-        btnBack = myDialog.findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        btnCopy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myDialog.dismiss();
+                Toast.makeText(view.getContext(), "Copied!", Toast.LENGTH_SHORT).show();
+                ClipboardManager clipboard = (ClipboardManager) view.getContext().getSystemService(view.getContext().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("id", SocketHandler.getSocketId());
+                clipboard.setPrimaryClip(clip);
             }
         });
-        myDialog.show();
+
+        return view;
     }
 }

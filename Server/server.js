@@ -44,21 +44,21 @@ io.on('connection', function (client) {
 
     //user press reject
 
-    client.on('callReject', function (){
-        client.broadcast.emit('callReject');
+    client.on('callReject', function (toId){
+        io.to(toId).emit('callReject');
     });
 
     //user press accept
 
-    client.on('callAccept', function (){
+    client.on('callAccept', function (toId){
         candidateList.forEach(element => {
             io.to(element['toId']).emit('candidate', element);
         });
-        client.broadcast.emit('callAccept');
+        io.to(toId).emit('callAccept');
     });
 
-    client.on('callEnd', function (){
-        client.broadcast.emit('callEnd');
+    client.on('callEnd', function (toId){
+        io.to(toId).emit('callEnd');
     });
 
     // Peer Establishment
