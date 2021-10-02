@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Socket;
+
 import io.socket.emitter.Emitter;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -59,6 +61,7 @@ public class DashboardActivity extends AppCompatActivity {
                         break;
 
                     case R.id.menuLogout:
+                        SocketHandler.getSocket().disconnect();
                         FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(DashboardActivity.this, LoginActivity.class));
                         finish();
