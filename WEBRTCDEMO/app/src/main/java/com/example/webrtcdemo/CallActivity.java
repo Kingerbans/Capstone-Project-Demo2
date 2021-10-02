@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -59,7 +60,8 @@ public class CallActivity extends AppCompatActivity{
     private static final String ANSWER = "answer";
     private static final String CANDIDATE = "candidate";
     private static final String FULLNAME = "fullName";
-    private static final String ID = "fromId";
+    private static final String fromID = "fromId";
+    private static final String toID = "toId";
     private static final String CALLREJECT = "callReject";
     private static final String CHECKCALLER = "checkCaller";
     private static final String CALLEND = "callEnd";
@@ -77,6 +79,7 @@ public class CallActivity extends AppCompatActivity{
     VideoTrack videoTrack;
     AudioSource audioSource;
     AudioTrack audioTrack;
+    AudioManager audioManager;
     VideoTrack remoteVideoTrack;
     PeerConnection peerConnection;
     SurfaceViewRenderer localView;
@@ -96,6 +99,10 @@ public class CallActivity extends AppCompatActivity{
         firebaseAuth = FirebaseAuth.getInstance();
 
         check = getIntent().getExtras().getBoolean(CHECKCALLER);
+
+        audioManager = (AudioManager) getApplicationContext().getSystemService(getApplicationContext().AUDIO_SERVICE);
+        audioManager.setMode(AudioManager.MODE_NORMAL);
+        audioManager.setSpeakerphoneOn(true);
 
         eglBaseContext = EglBase.create().getEglBaseContext();
 
@@ -187,7 +194,7 @@ public class CallActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 try {
-                    SocketHandler.getSocket().emit(CALLEND, SocketHandler.getSocketObj().getString(ID));
+                    SocketHandler.getSocket().emit(CALLEND, SocketHandler.getSocketObj().getString(fromID));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -199,7 +206,7 @@ public class CallActivity extends AppCompatActivity{
 
         if (!check) {
             try {
-                SocketHandler.getSocket().emit(CREATERECEIVE, SocketHandler.getSocketObj().getString(ID));
+                SocketHandler.getSocket().emit(CREATERECEIVE, SocketHandler.getSocketObj().getString(fromID));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -218,7 +225,7 @@ public class CallActivity extends AppCompatActivity{
                 @Override
                 public void onClick(View view) {
                     try {
-                        SocketHandler.getSocket().emit(CALLACCEPT, SocketHandler.getSocketObj().getString(ID));
+                        SocketHandler.getSocket().emit(CALLACCEPT, SocketHandler.getSocketObj().getString(fromID));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -230,7 +237,7 @@ public class CallActivity extends AppCompatActivity{
                 @Override
                 public void onClick(View view) {
                     try {
-                        SocketHandler.getSocket().emit(CALLREJECT, SocketHandler.getSocketObj().getString(ID));
+                        SocketHandler.getSocket().emit(CALLREJECT, SocketHandler.getSocketObj().getString(fromID));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -238,7 +245,7 @@ public class CallActivity extends AppCompatActivity{
                 }
             });
         } else {
-            SocketHandler.getSocket().emit(CALL, getIntent().getExtras().getString(FULLNAME));
+            SocketHandler.getSocket().emit(CALL, getIntent().getExtras().getString(toID));
         }
     }
 
@@ -350,7 +357,7 @@ public class CallActivity extends AppCompatActivity{
             try {
                 JSONObject obj = new JSONObject();
                 obj.put(SDP, sessionDescription.description);
-                obj.put(ID, SocketHandler.getSocketObj().getString(ID));
+                obj.put(fromID, SocketHandler.getSocketObj().getString(fromID));
                 if (createOffer) {
                     SocketHandler.getSocket().emit(OFFER, obj);
                 } else {
@@ -405,7 +412,7 @@ public class CallActivity extends AppCompatActivity{
                 obj.put(SDP_MID, iceCandidate.sdpMid);
                 obj.put(SDP_M_LINE_INDEX, iceCandidate.sdpMLineIndex);
                 obj.put(SDP, iceCandidate.sdp);
-                obj.put(ID, SocketHandler.getSocketObj().getString(ID));
+                obj.put(fromID, SocketHandler.getSocketObj().getString(fromID));
                 SocketHandler.getSocket().emit(CANDIDATE, obj);
             } catch (JSONException e) {
                 e.printStackTrace();

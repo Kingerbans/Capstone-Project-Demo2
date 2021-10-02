@@ -1,6 +1,5 @@
 package com.example.webrtcdemo.Fragments;
 
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -17,11 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.webrtcdemo.CallActivity;
-import com.example.webrtcdemo.DashboardActivity;
 import com.example.webrtcdemo.Handler.SocketHandler;
 import com.example.webrtcdemo.R;
-
-import io.socket.emitter.Emitter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +29,7 @@ public class HomeFragment extends Fragment {
     EditText edtTxtName;
     TextView txtID;
     private static final String CHECKCALLER = "checkCaller";
-    private static final String FULLNAME = "fullName";
+    private static final String toID = "toId";
 
     private String id;
 
@@ -97,7 +93,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), CallActivity.class);
                 intent.putExtra(CHECKCALLER, true);
-                intent.putExtra(FULLNAME, edtTxtName.getText().toString());
+                intent.putExtra(toID, edtTxtName.getText().toString());
                 startActivity(intent);
             }
         });

@@ -13,7 +13,7 @@ public class SocketHandler{
     public static String socketId;
     public static JSONObject socketObj;
 
-    public static final String SIGNALING_URI = "http://192.168.1.110:3000";
+    public static final String SIGNALING_URI = "https://fptdemo2.herokuapp.com/";
 
     public SocketHandler() {
         try {
