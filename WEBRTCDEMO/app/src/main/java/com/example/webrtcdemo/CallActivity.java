@@ -284,6 +284,7 @@ public class CallActivity extends AppCompatActivity{
     private void call() {
         ArrayList<PeerConnection.IceServer> iceServers = new ArrayList<>();
         iceServers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
+        iceServers.add(PeerConnection.IceServer.builder("turn:numb.viagenie.ca").setUsername("ducminhngo95@gmail.com").setPassword("chode123").createIceServer());
 
         peerConnection = peerConnectionFactory.createPeerConnection(
                 iceServers,
